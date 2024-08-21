@@ -37,4 +37,14 @@ jobs:
               uses: docker/build-push-action@v6
               with:
                 push: true
-                tags: saharsanaei/devops-app:latest
+                tags: ${{ secrets.DOCKERHUB_USERNAME }}/devops-app:latest
+
+            - name: deploy
+              uses: appleboy/ssh-action@master
+              with:
+                host: ${{ secrets.HOST }}
+                username: ${{ secrets.USERNAME }}
+                password: ${{ secrets.PASSWORD }}
+                script: |
+                  docker pull ${{ secrets.DOCKERHUB_USERNAME }}/devops-app:latest
+                  docker run -d -p 3000 -name devops-app ${{ secrets.DOCKERHUB_USERNAME }}/devops-app:latest       
